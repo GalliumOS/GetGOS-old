@@ -1,3 +1,4 @@
+##UNUSED FOR NOW, TRIGGER getgos.utils.addfile manually
 import os
 import time
 import sys
@@ -23,7 +24,7 @@ class FetchBuild(object):
         init_database(create_engine(config.get('database', 'uri')))
 
     def get_builds(self):
-        url = "https://ci.galliumos.org/job/android/api/json"
+        url = "https://ci.galliumos.org/job/GalliumOS-Nightlies/api/json"
         data = urllib2.urlopen(url).read()
         data = json.loads(data)
 
@@ -47,7 +48,7 @@ class FetchBuild(object):
 
         result = []
         for artifact in data['artifacts']:
-            if artifact['displayPath'].endswith(".zip") or artifact['displayPath'].endswith("CHANGES.txt"):  # and "NIGHTLY" in artifact['displayPath'] or "SNAPSHOT" in artifact['displayPath'] or "EXPERIMENTAL" in artifact['displayPath']:
+            if artifact['displayPath'].endswith(".iso") or artifact['displayPath'].endswith("CHANGES.txt"):  # and "NIGHTLY" in artifact['displayPath'] or "SNAPSHOT" in artifact['displayPath'] or "EXPERIMENTAL" in artifact['displayPath']:
                 url = "https://ci.galliumos.org/job/GalliumOS-Nightlies/%s/artifact/archive/%s" % (build['number'], artifact['displayPath'])
                 timestamp = (data['timestamp'] + data['duration']) / 1000
                 result.append((url, timestamp))
@@ -68,19 +69,13 @@ class FetchBuild(object):
                         base = "artifacts/%s" % artifact.replace("https://ci.galliumos.org/job/GalliumOS-Nightlies/", "")
                         build_number = base.split("/")[1]
                         fname = base.split("/")[-1]
-                        build_type = "stable"
-                        if "NIGHTLY" in artifact:
-                            build_type = "nightly"
-                        if "SNAPSHOT" in artifact:
-                            #build_type = "snapshot"
-                            build_type = "nightly"
-                        if "EXPERIMENTAL" in artifact:
-                            if "-M" in artifact:
-                                build_type = "snapshot"
-                            else:
-                                build_type = "test"
-                        if "-RC" in artifact:
+                        build_type = "nightly"
+                        if "RELEASE" in artifact:
+                            build_type = "release"
+                        if "RC" in artifact:
                             build_type = "RC"
+                        if "BETA" in artifact:
+                            build_type = "beta"
                         #cmd = "/usr/local/bin/getgos.addfile --timestamp %s --url %s --fullpath %s --type %s --config %s" % (timestamp, artifact, base, build_type, self.configPath)
                         try:
                             os.mkdir("/var/www/mirror/jenkins/%s" % build_number)
@@ -90,9 +85,9 @@ class FetchBuild(object):
                         print "Running: %s" % download_cmd
                         os.system(download_cmd)
                         if (fname != "CHANGES.txt"):
-                            mirror_cmd = "ssh -p2200 root@mirror.sea.tdrevolution.net \"/root/add.sh /srv/mirror/jenkins/%s %s %s\"" % (build_number, artifact, fname)
-                            print "Running: %s" % mirror_cmd
-                            os.system(mirror_cmd)
+                            #mirror_cmd = "ssh -p2200 root@mirror.sea.tdrevolution.net \"/root/add.sh /srv/mirror/jenkins/%s %s %s\"" % (build_number, artifact, fname)
+                            #print "Running: %s" % mirror_cmd
+                            #os.system(mirror_cmd)
                             addfile_cmd = "/usr/local/bin/getgos.addfile --timestamp %s --file /var/www/mirror/jenkins/%s/%s --fullpath jenkins/%s/%s --type %s --config %s" % (timestamp, build_number, fname, build_number, fname, build_type, self.configPath)
                             print "Running: %s" % addfile_cmd
                             os.system(addfile_cmd)

@@ -8,7 +8,6 @@ import time
 import os
 
 from ConfigParser import ConfigParser
-from android.ota import OTAPackage
 from datetime import datetime
 from sqlalchemy import create_engine
 from sqlalchemy.exc import IntegrityError
@@ -42,7 +41,7 @@ def md5sum(fname):
 
 
 def main():
-    parser = argparse.ArgumentParser(description='Add a file to a getgos server')
+    parser = argparse.ArgumentParser(description='Add a file to get.galliumos.org')
     parser.add_argument('--file',
                         dest='file',
                         required=False,
@@ -55,10 +54,15 @@ def main():
                         help="URL of the file to download and add")
     parser.add_argument('--type',
                         dest='type',
-                        choices=['nightly', 'RC', 'stable', 'snapshot', 'test'],
+                        choices=['nightly', 'beta', 'RC', 'release'],
                         required=True,
                         type=unicode,
                         help="Type of file")
+    parser.add_argument('--device',
+                        dest='device',
+                        required=True,
+                        type=unicode,
+                        help="Target device")
     parser.add_argument('--fullpath',
                         dest='full_path',
                         required=False,
@@ -67,7 +71,7 @@ def main():
     parser.add_argument('--basepath',
                         dest='base_path',
                         required=False,
-                        default="/opt/www/mirror/cm/",
+                        default="/opt/www/mirror/gos/",
                         help="Webroot of the mirror.")
     parser.add_argument('--config',
                         dest='config',
@@ -155,8 +159,6 @@ def process_file(args):
     init_database(create_engine(args.db_uri))
     session = DBSession()
 
-    ota = OTAPackage(args.file)
-
     md5hash = md5sum(args.file)
     new = File.get_by_md5sum(md5hash)
     if new is None:
@@ -175,7 +177,7 @@ def process_file(args):
 
     new.type = args.type
     new.size = os.path.getsize(args.file)
-    new.device = ota.build_prop.get('ro.cm.device', 'unknown')
+    new.device = args.device
     if args.timestamp is not None:
         new.date_created = datetime.fromtimestamp(args.timestamp)
     else:
