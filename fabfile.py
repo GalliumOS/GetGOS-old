@@ -17,7 +17,7 @@ env.key_filename = os.path.join(os.environ['TARDIS_HOME'], "keys", "fab_rsa")
 
 def all():
     env.user = "fabric"
-    env.hosts = ['get.cm:22221']
+    env.hosts = ['get.galliumos.org:22221']
 
 def uptime():
     run('uptime')
@@ -28,7 +28,7 @@ def shell():
 def deploy():
     local("rm -rf dist")
     local("python setup.py bdist_egg")
-    sudo("rm -rf /tmp/GetCM.egg")
-    put("dist/GetCM-*-py*.egg", "/tmp/GetCM.egg")
-    sudo("easy_install /tmp/GetCM.egg")
+    sudo("rm -rf /tmp/GetGOS.egg")
+    put("dist/GetGOS-*-py*.egg", "/tmp/GetGOS.egg")
+    sudo("easy_install /tmp/GetGOS.egg")
     sudo("supervisorctl restart cmbalance")

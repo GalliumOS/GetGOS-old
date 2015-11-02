@@ -1,5 +1,7 @@
 *.pyc
-GetCM.egg-info/*
+GetGOS.egg-info/*
 build/*
 dist/*
 *.db
+.eggs/
+nosetests.xml
