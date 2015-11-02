@@ -13,9 +13,9 @@ from datetime import datetime
 from sqlalchemy import create_engine
 from sqlalchemy.exc import IntegrityError
 
-from getcm.utils.string import convert_bytes
-from getcm.model import init_database, DBSession
-from getcm.model.schema import File
+from getgos.utils.string import convert_bytes
+from getgos.model import init_database, DBSession
+from getgos.model.schema import File
 
 # Initialize Logging
 logging.basicConfig(format="%(levelname)s: %(message)s", level=logging.DEBUG)
@@ -42,7 +42,7 @@ def md5sum(fname):
 
 
 def main():
-    parser = argparse.ArgumentParser(description='Add a file to a GetCM server')
+    parser = argparse.ArgumentParser(description='Add a file to a getgos server')
     parser.add_argument('--file',
                         dest='file',
                         required=False,
@@ -72,7 +72,7 @@ def main():
     parser.add_argument('--config',
                         dest='config',
                         required=False,
-                        default='/etc/getcm.ini',
+                        default='/etc/getgos.ini',
                         help="Path to configuration file.")
     parser.add_argument('--timestamp',
                         dest='timestamp',

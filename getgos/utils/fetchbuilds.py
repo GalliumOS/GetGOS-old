@@ -7,8 +7,8 @@ from sqlalchemy import create_engine
 from ConfigParser import ConfigParser
 from datetime import datetime
 
-from getcm.model import init_database, DBSession
-from getcm.model.schema import File
+from getgos.model import init_database, DBSession
+from getgos.model.schema import File
 
 
 class FetchBuild(object):
@@ -16,14 +16,14 @@ class FetchBuild(object):
         if len(sys.argv) == 2:
             self.configPath = sys.argv[1]
         else:
-            self.configPath = "/etc/getcm.ini"
+            self.configPath = "/etc/getgos.ini"
 
         config = ConfigParser()
         config.readfp(open(self.configPath, 'r'))
         init_database(create_engine(config.get('database', 'uri')))
 
     def get_builds(self):
-        url = "http://jenkins.cyanogenmod.com/job/android/api/json"
+        url = "https://ci.galliumos.org/job/android/api/json"
         data = urllib2.urlopen(url).read()
         data = json.loads(data)
 
@@ -48,7 +48,7 @@ class FetchBuild(object):
         result = []
         for artifact in data['artifacts']:
             if artifact['displayPath'].endswith(".zip") or artifact['displayPath'].endswith("CHANGES.txt"):  # and "NIGHTLY" in artifact['displayPath'] or "SNAPSHOT" in artifact['displayPath'] or "EXPERIMENTAL" in artifact['displayPath']:
-                url = "http://jenkins.cyanogenmod.com/job/android/%s/artifact/archive/%s" % (build['number'], artifact['displayPath'])
+                url = "https://ci.galliumos.org/job/GalliumOS-Nightlies/%s/artifact/archive/%s" % (build['number'], artifact['displayPath'])
                 timestamp = (data['timestamp'] + data['duration']) / 1000
                 result.append((url, timestamp))
         return result
@@ -60,12 +60,12 @@ class FetchBuild(object):
                 for artifactdata in artifactlist:
                     artifact, timestamp = artifactdata
                     full_path = "jenkins/%s/%s" % (artifact.split("/")[5], artifact.split("/")[-1])
-                    if os.path.exists("/opt/www/mirror/%s" % full_path):
+                    if os.path.exists("/var/www/mirror/%s" % full_path):
                         print "Exists, skipping."
                         continue
                     fileobj = File.get_by_fullpath(full_path)
                     if not fileobj:
-                        base = "artifacts/%s" % artifact.replace("http://jenkins.cyanogenmod.com/job/android/", "")
+                        base = "artifacts/%s" % artifact.replace("https://ci.galliumos.org/job/GalliumOS-Nightlies/", "")
                         build_number = base.split("/")[1]
                         fname = base.split("/")[-1]
                         build_type = "stable"
@@ -81,19 +81,19 @@ class FetchBuild(object):
                                 build_type = "test"
                         if "-RC" in artifact:
                             build_type = "RC"
-                        #cmd = "/usr/local/bin/getcm.addfile --timestamp %s --url %s --fullpath %s --type %s --config %s" % (timestamp, artifact, base, build_type, self.configPath)
+                        #cmd = "/usr/local/bin/getgos.addfile --timestamp %s --url %s --fullpath %s --type %s --config %s" % (timestamp, artifact, base, build_type, self.configPath)
                         try:
-                            os.mkdir("/opt/www/mirror/jenkins/%s" % build_number)
+                            os.mkdir("/var/www/mirror/jenkins/%s" % build_number)
                         except:
                             pass
-                        download_cmd = "wget -O /opt/www/mirror/jenkins/%s/%s %s" % (build_number, fname, artifact)
+                        download_cmd = "wget -O /var/www/mirror/jenkins/%s/%s %s" % (build_number, fname, artifact)
                         print "Running: %s" % download_cmd
                         os.system(download_cmd)
                         if (fname != "CHANGES.txt"):
                             mirror_cmd = "ssh -p2200 root@mirror.sea.tdrevolution.net \"/root/add.sh /srv/mirror/jenkins/%s %s %s\"" % (build_number, artifact, fname)
                             print "Running: %s" % mirror_cmd
                             os.system(mirror_cmd)
-                            addfile_cmd = "/usr/local/bin/getcm.addfile --timestamp %s --file /opt/www/mirror/jenkins/%s/%s --fullpath jenkins/%s/%s --type %s --config %s" % (timestamp, build_number, fname, build_number, fname, build_type, self.configPath)
+                            addfile_cmd = "/usr/local/bin/getgos.addfile --timestamp %s --file /var/www/mirror/jenkins/%s/%s --fullpath jenkins/%s/%s --type %s --config %s" % (timestamp, build_number, fname, build_number, fname, build_type, self.configPath)
                             print "Running: %s" % addfile_cmd
                             os.system(addfile_cmd)
                             #raise SystemExit()
@@ -101,6 +101,6 @@ class FetchBuild(object):
 
 def main():
     print("==================================")
-    print("Starting getcm.fetchbuilds at %s" % datetime.now())
+    print("Starting getgos.fetchbuilds at %s" % datetime.now())
     fb = FetchBuild()
     fb.run()

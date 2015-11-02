@@ -1,7 +1,7 @@
 from datetime import datetime
-from getcm import cache
-from getcm.model import Base, DBSession
-from getcm.utils.string import convert_bytes, base62_decode
+from getgos import cache
+from getgos.model import Base, DBSession
+from getgos.utils.string import convert_bytes, base62_decode
 from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
 from sqlalchemy.orm import relation
 from sqlalchemy.orm.exc import NoResultFound

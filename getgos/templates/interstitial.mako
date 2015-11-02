@@ -2,7 +2,7 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8">
-        <title>CyanogenMod Mirror Network</title>
+        <title>GalliumOS Mirror Network</title>
         <link rel="stylesheet" type="text/css" href="/static/reset.css" />
         <style type="text/css">
         body {

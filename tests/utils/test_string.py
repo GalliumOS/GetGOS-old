@@ -1,5 +1,5 @@
 from unittest import TestCase
-from getcm.utils.string import *
+from getgos.utils.string import *
 
 
 class TestStringUtils(TestCase):

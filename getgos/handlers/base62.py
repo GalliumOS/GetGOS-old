@@ -1,5 +1,5 @@
-from getcm.model.schema import File
-from getcm.utils.string import base62_encode
+from getgos.model.schema import File
+from getgos.utils.string import base62_encode
 from base import BaseHandler
 
 

@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8">
-    <title>CyanogenMod Downloads</title>
+    <title>GalliumOS Downloads</title>
     <link rel="stylesheet" type="text/css" href="${h.static_url('/bootstrap/css/bootstrap.min.css')}"/>
     <link rel="stylesheet" type="text/css" href="${h.static_url('/bootstrap/css/bootstrap-responsive.min.css')}"/>
     <link rel="stylesheet" type="text/css" href="${h.static_url('core.css')}"/>

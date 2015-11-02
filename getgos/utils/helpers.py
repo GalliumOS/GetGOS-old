@@ -1,6 +1,6 @@
 import os
 import hashlib
-from getcm import cache
+from getgos import cache
 
 def static_url(path):
     path = path.lstrip("/")

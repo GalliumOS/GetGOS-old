@@ -15,7 +15,7 @@ from mako.lookup import TemplateLookup
 
 from model import DBSession, init_database
 from handlers import BrowseHandler, SumHandler, ZipHandler, Base62Handler, ApiHandler, MirrorApplicationHandler
-from getcm.utils import WeightedChoice
+from getgos.utils import WeightedChoice
 
 define('port', 6543)
 define('debug', True)
@@ -51,13 +51,13 @@ class Application(tornado.web.Application):
         self.lookup = TemplateLookup(directories=[template_path], filesystem_checks=False)
 
         self.mirrorpool = WeightedChoice((
-            ('http://content.dazzozo.com/%s', 1000),
+            ('http://mirror.galliumos.org/%s', 1000),
         ))
 
 
 def run_server():
     # Define command line options
-    define('config', default='/etc/getcm.ini', type=unicode, help="Path to configuration file")
+    define('config', default='/etc/getgos.ini', type=unicode, help="Path to configuration file")
     tornado.options.parse_command_line()
     app = Application()
 

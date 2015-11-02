@@ -2,8 +2,8 @@ import json
 import time
 import re
 from tornado.web import asynchronous
-from getcm import cache
-from getcm.model.schema import File
+from getgos import cache
+from getgos.model.schema import File
 from base import BaseHandler
 
 
@@ -72,8 +72,8 @@ class ApiHandler(BaseHandler):
                 result.append({
                     'channel': channel,
                     'filename': file_obj.filename,
-                    'url': "http://getcm.dazzozo.com/get/%s" % file_obj.full_path,
-                    'changes': "http://getcm.dazzozo.com/get/%s" % changesfile,
+                    'url': "http://get.galliumos.org/get/%s" % file_obj.full_path,
+                    'changes': "http://get.galliumos.org/get/%s" % changesfile,
                     'md5sum': file_obj.md5sum,
                     'timestamp': file_obj.date_created.strftime('%s')
                 })
@@ -108,8 +108,8 @@ class ApiHandler(BaseHandler):
                     result.append({
                         'channel': channel,
                         'filename': file_obj.filename,
-                        'url': "http://getcm.dazzozo.com/get/%s" % file_obj.full_path,
-                        'changes': "http://getcm.dazzozo.com/get/%s" % changesfile,
+                        'url': "http://get.dazzozo.org/get/%s" % file_obj.full_path,
+                        'changes': "http://get.galliumos.org/get/%s" % changesfile,
                         'md5sum': file_obj.md5sum,
                         'timestamp': file_obj.date_created.strftime('%s')
                     })
